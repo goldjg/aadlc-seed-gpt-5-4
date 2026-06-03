@@ -10,7 +10,7 @@ interface CreateArgv extends FormatArgv {
   path: string
 }
 
-const NO_OP = () => undefined
+const noOp = () => undefined
 
 export const command = 'create <path>'
 export const describe = 'Create new project based on `cli-typescript-starter`.'
@@ -44,7 +44,7 @@ export async function handler(argv: ArgumentsCamelCase<CreateArgv>) {
         ready: false,
         created: false,
       },
-      NO_OP,
+      noOp,
     )
     return
   }

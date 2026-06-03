@@ -64,4 +64,25 @@ describe('create command', () => {
       created: false,
     })
   })
+
+  it('writes an error payload in json mode', async () => {
+    jest.mocked(logger.prompt).mockResolvedValue(true)
+    jest.mocked(downloadTemplate).mockRejectedValue(new Error('download failed'))
+    const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => true)
+
+    await handler({
+      path: '/tmp/project',
+      format: 'json',
+    } as never)
+
+    expect(logger.error).not.toHaveBeenCalled()
+    expect(writeSpy).toHaveBeenCalledTimes(1)
+    expect(JSON.parse(String(writeSpy.mock.calls[0]![0]))).toEqual({
+      command: 'create',
+      path: '/tmp/project',
+      ready: true,
+      created: false,
+      error: 'download failed',
+    })
+  })
 })

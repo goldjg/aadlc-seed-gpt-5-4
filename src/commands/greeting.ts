@@ -28,7 +28,7 @@ export async function handler(argv: ArgumentsCamelCase<GreetingArgv>) {
     type: 'text',
   })
 
-  const mood = await logger.prompt('How are you?', {
+  const moodResponse = await logger.prompt('How are you?', {
     type: 'select',
     options: [
       '👌',
@@ -41,6 +41,8 @@ export async function handler(argv: ArgumentsCamelCase<GreetingArgv>) {
       },
     ],
   })
+
+  const mood = typeof moodResponse === 'string' ? moodResponse : moodResponse.value
 
   const result = createGreetingResult(username, mood)
 
