@@ -21,7 +21,9 @@ export function builder(yargs: Argv): Argv<InfoArgv> {
 }
 
 export function createInfoResult(argv: ArgumentsCamelCase<InfoArgv>) {
-  const { format: _format, ...displayArgv } = argv
+  const { format, ...displayArgv } = argv
+
+  void format
 
   return {
     command: 'info',

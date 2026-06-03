@@ -5,6 +5,12 @@ import { FormatArgv, writeFormattedOutput } from '../output'
 
 interface GreetingArgv extends FormatArgv {}
 
+interface GreetingMoodOption {
+  label: string
+  value: string
+  hint: string
+}
+
 export const command = 'greeting'
 export const describe = 'Displays interactive prompts to demonstrate user input handling.'
 export const aliases = ['g']
@@ -28,7 +34,7 @@ export async function handler(argv: ArgumentsCamelCase<GreetingArgv>) {
     type: 'text',
   })
 
-  const moodResponse = await logger.prompt('How are you?', {
+  const moodResponse = (await logger.prompt('How are you?', {
     type: 'select',
     options: [
       '👌',
@@ -40,7 +46,7 @@ export async function handler(argv: ArgumentsCamelCase<GreetingArgv>) {
         hint: 'take care',
       },
     ],
-  })
+  })) as string | GreetingMoodOption
 
   const mood = typeof moodResponse === 'string' ? moodResponse : moodResponse.value
 
