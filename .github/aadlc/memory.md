@@ -8,113 +8,121 @@ unresolved question should carry forward.
 
 Project purpose
 
-This repository is a controlled benchmark environment used to evaluate
-coding-model performance within an AADLC-governed software development
-workflow.
+This repository combines a TypeScript CLI starter application with
+AADLC governance artefacts and benchmark materials.
 
-The repository is derived from a TypeScript CLI starter project and is
-used to compare cost, quality, validation outcomes, steering effort,
-artifact quality, and credit consumption across multiple coding models.
+The shipped application is a Node.js CLI that demonstrates command
+registration, interactive prompting, logging, scaffolding, and standard
+TypeScript build/test tooling.
 
-The benchmark measures useful engineering work performed within a
-governed workflow rather than raw model capability in isolation.
+Benchmark prompts and AADLC files govern how changes are evaluated, but
+the application code remains the CLI starter in `bin/` and `src/`.
 
 Non-goals
 
-* Determining universal model superiority.
-* Comparing models outside the scope of this repository.
-* Measuring general intelligence.
-* Optimising benchmark tasks for a specific model.
-* Importing learnings from other benchmark runs during an active run.
-* Using benchmark results as proof of performance on unrelated projects.
+- It is not a web service or long-running daemon.
+- It does not implement authentication or authorization flows.
+- It does not persist domain data or run a database.
+- It does not consume benchmark result files as application inputs.
+- It does not vendor scaffold templates locally; the `create` command
+  downloads them on demand.
 
 Architecture summary
 
-This repository is based on a TypeScript CLI starter application.
+`bin/run.ts` is the CLI entrypoint. It loads `dotenv`, creates the
+`yargs` runner, registers every exported command, and requires at least
+one subcommand.
 
-AADLC governance artefacts are stored in .github/aadlc/.
+`src/commands/index.ts` is the centralized command registry for the
+sample commands: `info`, `greeting`, and `create`. `src/index.ts`
+re-exports that registry for the entrypoint.
 
-Benchmark definitions, prompts, and run records are stored in
-benchmark/.
+`src/logger.ts` creates the shared `consola` logger used for logging and
+interactive prompts.
 
-Application source code remains within the original project structure
-provided by the seed repository.
+`tsup.config.ts` builds `bin/run.ts` into `dist/run.js`, and `bin/run`
+delegates execution to that built file.
 
-Benchmark tasks should preserve architectural consistency unless a phase
-explicitly requires a change.
+`jest.config.js` uses `ts-jest` and ignores `dist/`, so tests exercise
+source files rather than generated output.
+
+AADLC governance artefacts live in `.github/aadlc/`, and benchmark phase
+prompts live in `benchmark/prompts/`.
 
 Core invariants
 
-* All benchmark runs must start from the same seed commit.
-* Benchmark prompts are part of the benchmark definition and must not be
-    modified during a run.
-* Results from other benchmark repositories must not be imported.
-* Durable memory should capture repository truths rather than session
-    history.
-* Existing behaviour should not change unless required by the active
-    benchmark phase.
-* Validation results take precedence over model confidence.
-* Keep diffs minimal, reviewable, and aligned to the active PR contract.
-* AADLC artefacts should reduce semantic rediscovery without becoming a
-    per-session diary.
+- CLI startup loads environment variables before command execution.
+- Command registration is centralized through `src/commands/index.ts`.
+- The CLI requires at least one command before running.
+- The `create` command normalizes relative target paths against
+  `process.cwd()`.
+- The `create` command crosses a network trust boundary by downloading
+  `gh:kucherenko/cli-typescript-starter` with `giget`.
+- The `greeting` and `create` commands are interactive and depend on TTY
+  prompts through `consola`.
+- The `info` command defaults `--full` to `true` and logs process config
+  when enabled.
+- `dist/` is generated build output and not the source of truth.
+- Benchmark prompts define the benchmark phases and should remain stable
+  during measured runs.
 
 Benchmark integrity rules
 
-* Do not inspect other benchmark repositories.
-* Do not import findings from other model runs.
-* Do not compare benchmark outcomes until a run is complete.
-* Benchmark scoring is performed by the human operator.
-* Credit usage measurements are authoritative even if they contradict
-    model assumptions.
+- Do not modify files in `benchmark/prompts/` during a measured run.
+- Do not import findings from other benchmark repositories or runs.
+- Keep AADLC artefact updates grounded in the checked-in repository
+  state.
+- Treat validation output as higher confidence than assumptions about
+  CLI behaviour.
 
 Trust boundaries
 
-* The benchmark prompts define the permitted scope of work.
-* The active PR contract defines the permitted change boundary.
-* Human review is the final authority on acceptance.
-* Validation commands are the primary source of behavioural truth.
-* External repositories, benchmark runs, blog posts, discussions, and
-    model outputs are out of scope unless explicitly introduced into this
-    repository.
+- The active task prompt and `.github/aadlc/current-pr-contract.md`
+  define allowed change scope.
+- Repository files are the source of truth for code, tooling, and
+  governance state.
+- CLI arguments, prompt answers, environment variables, filesystem
+  targets, and remote template content are external inputs.
+- Human review remains the final authority for benchmark acceptance.
 
 Known sharp edges
 
-* Long repository hydration phases can consume significant model effort
-    before useful work begins.
-* Models may over-anchor on previous instructions or generated
-    artefacts.
-* Validation success does not automatically imply contract compliance.
-* Excessive corrective prompting is a failure signal and should be
-    recorded as steering effort.
-* Different models may produce materially different solutions to the
-    same task.
+- Automated test coverage is minimal and currently contains only a basic
+  truthy smoke test.
+- `create` can write to any absolute or cwd-relative path chosen by the
+  operator.
+- `corepack pnpm lint` succeeds but emits a warning because
+  `@typescript-eslint` does not officially support the pinned
+  TypeScript 5.4.5 version.
+- Husky hook scripts invoke `pnpm` directly and therefore assume `pnpm`
+  is available on `PATH`.
 
 Field findings
 
-<!-- Populate with durable findings discovered during benchmark runs. -->
+- The benchmark instructions reference `benchmark/playbook.md`, but the
+  checked-in benchmark playbook currently lives at
+  `benchmark/benchmark.md`.
 
 Canonical validation commands
 
-<!-- Populate with validated commands that prove expected behaviour in this repository. -->
+- `corepack pnpm lint`
+- `corepack pnpm test`
+- `corepack pnpm build`
 
 Current operating assumptions
 
-* Model availability is not a stable invariant.
-* The benchmark playbook remains the source of truth for benchmark
-    execution.
-* The active PR contract remains the source of truth for the current
-    phase.
-* Useful work should be evaluated in conjunction with cost, quality, and
-    steering effort.
+- Development and validation are expected to run through pnpm-managed
+  scripts defined in `package.json`.
+- TypeScript targets Node 20 settings via `@tsconfig/node20`.
+- Release automation is configured through `semantic-release` branch
+  rules and depends on external secret provisioning.
 
 Open questions
 
-* Which benchmark phases consume the greatest proportion of credits?
-* Which models require the least steering effort?
-* Which models produce the most maintainable artefacts?
-* Does AADLC reduce total credit consumption while maintaining quality?
-* Which model delivers the best cost-to-validated-work ratio?
+- Should the Husky hook file contents be realigned with their hook names?
+- Should automated tests cover command behaviour beyond the starter smoke
+  test?
 
 Last updated
 
-2026-06-03 by benchmark scaffold
+2026-06-03 by Copilot
