@@ -1,41 +1,56 @@
 # version: 1.0.0
 invariants:
+  - id: cli-entrypoint-loads-dotenv
+    name: CLI entrypoint loads dotenv
+    rule: 'The CLI entrypoint in `bin/run.ts` must load `dotenv` before command execution so environment variables are available to commands and tooling.'
+    severity: high
+
+  - id: centralized-command-registry
+    name: Centralized command registry
+    rule: 'CLI commands are registered from `src/commands/index.ts` via `src/index.ts`; command additions or removals must update that registry.'
+    severity: high
+
+  - id: cli-requires-subcommand
+    name: CLI requires subcommand
+    rule: 'The `yargs` runner must continue to demand at least one command before execution.'
+    severity: high
+
+  - id: create-path-normalization
+    name: Create path normalization
+    rule: 'The `create` command must continue to coerce relative target paths against `process.cwd()` before scaffolding.'
+    severity: high
+
+  - id: create-command-uses-remote-template
+    name: Create command uses remote template
+    rule: 'The `create` command scaffolds from `gh:kucherenko/cli-typescript-starter`, so changes in that path cross a network trust boundary.'
+    severity: high
+
+  - id: dist-run-is-generated
+    name: dist run is generated
+    rule: '`bin/run` delegates to generated `dist/run`, so `dist/` must remain build output produced from source and build config.'
+    severity: high
+
+  - id: jest-tests-ignore-dist
+    name: Jest tests ignore dist
+    rule: 'Automated tests run through Jest with `ts-jest` and must continue to ignore the generated `dist/` directory.'
+    severity: medium
+
+  - id: benchmark-prompts-are-static
+    name: Benchmark prompts are static
+    rule: 'Files under `benchmark/prompts/` define benchmark phases and must remain unchanged during measured runs.'
+    severity: high
+
   - id: no-hardcoded-secrets
     name: No hardcoded secrets
-    rule: Secrets, tokens, and credentials must not be committed to repository files.
+    rule: 'Secrets, tokens, and credentials must not be committed to repository files.'
     severity: critical
 
   - id: no-broad-rewrites
     name: No broad rewrites
-    rule: Changes must remain scoped to requested outcomes and avoid unrelated rewrites.
-    severity: high
-
-  - id: security-baseline-preserved
-    name: Security baseline preserved
-    rule: Changes must preserve authentication, authorization, validation, and secret handling guarantees.
-    severity: critical
-
-  - id: plan-before-execute
-    name: Plan before execute
-    rule: Significant work requires an explicit plan before implementation.
+    rule: 'Changes must remain scoped to requested outcomes and avoid unrelated rewrites.'
     severity: high
 
   - id: no-unapproved-dependencies
     name: No unapproved dependencies
-    rule: New dependencies require explicit justification and approval.
-    severity: high
-
-  - id: pr-contract-respected
-    name: PR contract respected
-    rule: Execution must stay inside the current PR contract unless scope is explicitly amended.
-    severity: high
-
-  - id: minimum-sufficient-reasoning-depth
-    name: Minimum sufficient reasoning depth
-    rule: Reasoning depth must be escalated only when risk, uncertainty, or novelty justifies the cost.
-    severity: high
-
-  - id: invariant-amendment-governance
-    name: Invariant amendment governance
-    rule: Agents must preserve invariants unless the user explicitly amends the invariant or opens a separate governance change.
+    rule: 'New dependencies require explicit justification and approval.'
     severity: high
