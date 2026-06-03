@@ -12,7 +12,7 @@ export const command = 'info'
 export const describe = 'Basic command to display information about the CLI application.'
 export const aliases = ['i']
 
-export function builder(yargs: Argv): Argv<InfoArgv> {
+export function builder(yargs: Argv): Argv {
   return yargs.option('full', {
     type: 'boolean',
     alias: 'f',

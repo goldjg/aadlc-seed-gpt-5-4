@@ -87,6 +87,19 @@ demonstrate the capabilities of the CLI application.
   development experience.
 - In production, execute the CLI application directly with `my-project [command name]` to run the desired
   command from the built project (the name of command should be provided in `package.json` in `bin`).
+- All commands support `--format text` and `--format json`. Text remains the default output format.
+
+### Output Formats
+
+Use `--format text` for the existing human-readable terminal output, or `--format json` for a single machine-readable
+JSON object describing the command result.
+
+```sh
+pnpm start info --format json
+pnpm start create my-project --format json
+```
+
+Interactive commands still prompt in text mode; `--format json` changes the final emitted command result.
 
 ### Sample Commands
 
