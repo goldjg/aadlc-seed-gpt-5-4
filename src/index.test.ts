@@ -26,7 +26,7 @@ describe('writeFormattedOutput', () => {
   })
 
   it('rejects non-string format values', () => {
-    expect(() => validateOutputFormat(true)).toThrow('The --format option requires a value. Use one of: text, json.')
+    expect(() => validateOutputFormat(true)).toThrow('The --format option must be a string. Use one of: text, json.')
   })
 
   it('rejects unsupported format values', () => {
@@ -45,7 +45,7 @@ describe('writeFormattedOutput', () => {
     const renderText = jest.fn()
 
     expect(() => writeFormattedOutput(true as never, { ok: true }, renderText)).toThrow(
-      'The --format option requires a value. Use one of: text, json.',
+      'The --format option must be a string. Use one of: text, json.',
     )
     expect(renderText).not.toHaveBeenCalled()
   })

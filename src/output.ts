@@ -21,7 +21,11 @@ export function createOutputFormatOption() {
 }
 
 export function validateOutputFormat(value: unknown): OutputFormat {
-  if (typeof value !== 'string' || value.length === 0) {
+  if (typeof value !== 'string') {
+    throw new TypeError(`The --format option must be a string. Use one of: ${outputFormatList}.`)
+  }
+
+  if (value.length === 0) {
     throw new TypeError(`The --format option requires a value. Use one of: ${outputFormatList}.`)
   }
 
@@ -33,6 +37,7 @@ export function validateOutputFormat(value: unknown): OutputFormat {
 }
 
 export function writeFormattedOutput<T>(format: OutputFormat, jsonPayload: T, renderText: () => void) {
+  // Keep a runtime guard because handlers can be called directly outside yargs parsing.
   if (validateOutputFormat(format) === 'json') {
     process.stdout.write(`${JSON.stringify(jsonPayload, null, 2)}\n`)
     return
