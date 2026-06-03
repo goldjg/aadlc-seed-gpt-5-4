@@ -37,7 +37,7 @@ describe('writeFormattedOutput', () => {
     const parser = yargs([]).exitProcess(false).option('format', createOutputFormatOption())
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
 
-    expect(() => parser.parseSync(['--format'])).toThrow('Not enough arguments following: format')
+    expect(() => parser.parseSync(['--format'])).toThrow(/Not enough arguments following: format/)
     expect(consoleErrorSpy).toHaveBeenCalled()
   })
 

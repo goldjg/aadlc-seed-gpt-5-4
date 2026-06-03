@@ -5,6 +5,10 @@ export type OutputFormat = (typeof outputFormats)[number]
 const outputFormatList = outputFormats.join(', ')
 const outputFormatSet = new Set<OutputFormat>(outputFormats)
 
+function isOutputFormat(value: string): value is OutputFormat {
+  return outputFormatSet.has(value as OutputFormat)
+}
+
 export interface FormatArgv {
   format: OutputFormat
 }
@@ -29,8 +33,8 @@ export function validateOutputFormat(value: unknown): OutputFormat {
     throw new TypeError(`The --format option requires a value. Use one of: ${outputFormatList}.`)
   }
 
-  if (outputFormatSet.has(value as OutputFormat)) {
-    return value as OutputFormat
+  if (isOutputFormat(value)) {
+    return value
   }
 
   throw new TypeError(`Unsupported --format value "${value}". Use one of: ${outputFormatList}.`)
