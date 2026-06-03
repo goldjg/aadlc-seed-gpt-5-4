@@ -25,7 +25,7 @@ describe('writeFormattedOutput', () => {
     expect(renderText).toHaveBeenCalledTimes(1)
   })
 
-  it('rejects missing format values', () => {
+  it('rejects non-string format values', () => {
     expect(() => validateOutputFormat(true)).toThrow('The --format option requires a value. Use one of: text, json.')
   })
 
@@ -44,7 +44,7 @@ describe('writeFormattedOutput', () => {
   it('does not silently fall back to text for invalid formats', () => {
     const renderText = jest.fn()
 
-    expect(() => writeFormattedOutput(true, { ok: true }, renderText)).toThrow(
+    expect(() => writeFormattedOutput(true as never, { ok: true }, renderText)).toThrow(
       'The --format option requires a value. Use one of: text, json.',
     )
     expect(renderText).not.toHaveBeenCalled()

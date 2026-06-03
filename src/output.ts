@@ -31,7 +31,7 @@ export function validateOutputFormat(value: unknown): OutputFormat {
   throw new TypeError(`Unsupported --format value "${value}". Use one of: ${outputFormatList}.`)
 }
 
-export function writeFormattedOutput<T>(format: unknown, jsonPayload: T, renderText: () => void) {
+export function writeFormattedOutput<T>(format: OutputFormat, jsonPayload: T, renderText: () => void) {
   if (validateOutputFormat(format) === 'json') {
     process.stdout.write(`${JSON.stringify(jsonPayload, null, 2)}\n`)
     return
