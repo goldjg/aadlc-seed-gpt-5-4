@@ -2,6 +2,7 @@ import yargs, { CommandModule } from 'yargs'
 import { config } from 'dotenv'
 import { commands } from '../src'
 import { bgBlue, bold, red } from 'picocolors'
+import { outputFormats } from '../src/output'
 
 config()
 
@@ -12,6 +13,11 @@ run.usage(
     See more on https://github.com/kucherenko/cli-typescript-starter`,
   ),
 )
+run.option('format', {
+  choices: outputFormats,
+  default: 'text',
+  describe: 'Output format for command results.',
+})
 for (const command of commands) {
   run.command(command as CommandModule)
 }

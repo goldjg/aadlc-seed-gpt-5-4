@@ -4,8 +4,9 @@ import * as process from 'node:process'
 import { logger } from '../logger'
 import { bold, green, red } from 'picocolors'
 import { downloadTemplate } from 'giget'
+import { FormatArgv, writeFormattedOutput } from '../output'
 
-interface CreateArgv {
+interface CreateArgv extends FormatArgv {
   path: string
 }
 
@@ -37,13 +38,51 @@ export async function handler(argv: ArgumentsCamelCase<CreateArgv>) {
       await downloadTemplate('gh:kucherenko/cli-typescript-starter', {
         dir: argv.path,
       })
-      logger.box(
-        green(
-          `The cli project created at ${bold(argv.path)} folder.\n Go to the folder and run ${bold('pnpm install')} to start!\n Enjoy your coding!`,
-        ),
+      writeFormattedOutput(
+        argv.format,
+        {
+          command: 'create',
+          path: argv.path,
+          ready: true,
+          created: true,
+          nextStep: 'pnpm install',
+        },
+        () => {
+          logger.box(
+            green(
+              `The cli project created at ${bold(argv.path)} folder.\n Go to the folder and run ${bold('pnpm install')} to start!\n Enjoy your coding!`,
+            ),
+          )
+        },
       )
     } catch (e) {
-      logger.error(red((e as Error).message))
+      const errorMessage = (e as Error).message
+
+      writeFormattedOutput(
+        argv.format,
+        {
+          command: 'create',
+          path: argv.path,
+          ready: true,
+          created: false,
+          error: errorMessage,
+        },
+        () => {
+          logger.error(red(errorMessage))
+        },
+      )
     }
+    return
   }
+
+  writeFormattedOutput(
+    argv.format,
+    {
+      command: 'create',
+      path: argv.path,
+      ready: false,
+      created: false,
+    },
+    () => {},
+  )
 }
