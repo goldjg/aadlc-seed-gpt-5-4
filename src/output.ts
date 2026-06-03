@@ -3,6 +3,7 @@ export const outputFormats = ['text', 'json'] as const
 export type OutputFormat = (typeof outputFormats)[number]
 
 const outputFormatList = outputFormats.join(', ')
+const outputFormatSet = new Set<OutputFormat>(outputFormats)
 
 export interface FormatArgv {
   format: OutputFormat
@@ -24,7 +25,7 @@ export function validateOutputFormat(value: unknown): OutputFormat {
     throw new TypeError(`The --format option requires a value. Use one of: ${outputFormatList}.`)
   }
 
-  if ((outputFormats as readonly string[]).includes(value)) {
+  if (outputFormatSet.has(value as OutputFormat)) {
     return value as OutputFormat
   }
 
