@@ -23,8 +23,6 @@ export function builder(yargs: Argv): Argv<InfoArgv> {
 export function createInfoResult(argv: ArgumentsCamelCase<InfoArgv>) {
   const { format, ...displayArgv } = argv
 
-  void format
-
   return {
     command: 'info',
     node: process.version,
