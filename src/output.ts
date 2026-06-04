@@ -5,8 +5,34 @@ export type OutputFormat = (typeof outputFormats)[number]
 const outputFormatList = outputFormats.join(', ')
 const outputFormatSet = new Set<OutputFormat>(outputFormats)
 
+interface FormattedOutput<T> {
+  jsonPayload: T
+  renderText: () => void
+}
+
+interface OutputFormatter {
+  write<T>(output: FormattedOutput<T>): void
+}
+
 function isOutputFormat(value: string): value is OutputFormat {
   return outputFormatSet.has(value as OutputFormat)
+}
+
+const textOutputFormatter: OutputFormatter = {
+  write({ renderText }) {
+    renderText()
+  },
+}
+
+const jsonOutputFormatter: OutputFormatter = {
+  write({ jsonPayload }) {
+    process.stdout.write(`${JSON.stringify(jsonPayload, null, 2)}\n`)
+  },
+}
+
+const outputFormatters: Record<OutputFormat, OutputFormatter> = {
+  text: textOutputFormatter,
+  json: jsonOutputFormatter,
 }
 
 export interface FormatArgv {
@@ -42,10 +68,10 @@ export function validateOutputFormat(value: unknown): OutputFormat {
 
 export function writeFormattedOutput<T>(format: OutputFormat, jsonPayload: T, renderText: () => void) {
   // Keep a runtime guard because handlers can be called directly outside yargs parsing.
-  if (validateOutputFormat(format) === 'json') {
-    process.stdout.write(`${JSON.stringify(jsonPayload, null, 2)}\n`)
-    return
-  }
+  const outputFormatter = outputFormatters[validateOutputFormat(format)]
 
-  renderText()
+  outputFormatter.write({
+    jsonPayload,
+    renderText,
+  })
 }
