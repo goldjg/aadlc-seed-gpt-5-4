@@ -1,4 +1,4 @@
-pnpm lint:fix
-pnpm format:fix
-pnpm test
-pnpm build
+corepack pnpm lint:fix
+corepack pnpm format:fix
+corepack pnpm test
+corepack pnpm build

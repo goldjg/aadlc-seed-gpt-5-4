@@ -87,15 +87,13 @@ Trust boundaries
 
 Known sharp edges
 
-- Automated test coverage is minimal and currently contains only a basic
-  truthy smoke test.
+- Automated test coverage is unit-level and does not exercise the full CLI
+  entrypoint end to end.
 - `create` can write to any absolute or cwd-relative path chosen by the
   operator.
 - `corepack pnpm lint` succeeds but emits a warning because
   `@typescript-eslint` does not officially support the pinned
   TypeScript 5.4.5 version.
-- Husky hook scripts invoke `pnpm` directly and therefore assume `pnpm`
-  is available on `PATH`.
 
 Field findings
 
@@ -113,16 +111,17 @@ Current operating assumptions
 
 - Development and validation are expected to run through pnpm-managed
   scripts defined in `package.json`.
+- Husky hooks run repository checks through `corepack pnpm`, and
+  `commit-msg` validates conventional commits with `commitlint --edit`.
 - TypeScript targets Node 20 settings via `@tsconfig/node20`.
 - Release automation is configured through `semantic-release` branch
   rules and depends on external secret provisioning.
 
 Open questions
 
-- Should the Husky hook file contents be realigned with their hook names?
-- Should automated tests cover command behaviour beyond the starter smoke
-  test?
+- Should automated tests cover the full CLI entrypoint end to end in
+  addition to the current unit coverage?
 
 Last updated
 
-2026-06-03 by Copilot
+2026-06-04 by Copilot
