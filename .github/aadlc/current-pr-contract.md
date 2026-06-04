@@ -2,30 +2,36 @@
 
 ## Status
 
-Phase 05 documentation is in progress.
+Phase 06 review-hardening is in progress.
 
 ## Scope
 
-Refresh repository documentation so usage examples and output-format guidance match the current CLI behaviour.
+Review prior benchmark phases against the PR contract, memory, invariants, trust boundaries, and acceptance criteria, then make only the minimal corrections needed to keep the repository aligned.
 
 ## Intended approach
 
-- Identify where the README still describes outdated command entrypoints or incomplete output behaviour.
-- Update runnable usage examples to use the current built CLI flow.
-- Document the `--format` contract, including the JSON payload behaviour for interactive commands.
-- Update AADLC artefacts only where the documentation phase needs the governance record to stay aligned.
+- Audit source, tests, README, and AADLC artefacts against the completed benchmark phases.
+- Fix only concrete gaps that affect correctness, maintainability, validation, or contract alignment.
+- Prefer tests and governance artefact updates when behaviour is already correct.
+- Record the review findings in this contract so the hardening pass remains explainable.
 
 ## Risks
 
-- README command examples can drift from the actual runnable entrypoint if they rely on the wrong script.
-- Output format documentation can become misleading if it does not mention interactive prompt behaviour.
-- AADLC artefacts can become inconsistent if they still describe the earlier feature phase instead of the docs phase.
+- Review hardening can accidentally broaden scope into new feature work or refactoring.
+- Test additions can drift from the active command contract if they assert incidental runtime details.
+- AADLC artefacts can become misleading if they still describe the prior documentation phase instead of the active hardening pass.
 
 ## Assumptions
 
-- Existing CLI behaviour is already the source of truth; this phase only documents it.
-- The built `bin/run` entrypoint is the safest basis for runnable README examples.
-- JSON examples should describe stable fields without depending on environment-specific values such as memory totals.
+- Existing CLI behaviour remains the source of truth unless the review finds a concrete defect.
+- A minimal hardening pass may be satisfied by focused test coverage and AADLC artefact updates without production code changes.
+- Validation output is the final check on whether prior phases remain intact after the hardening pass.
+
+## Review findings
+
+- The `greeting` command lacked handler-level coverage for the interactive `--format json` path.
+- The active PR contract still described the phase-05 documentation scope instead of the phase-06 hardening scope.
+- Husky hooks were configured to call `pnpm` directly, which broke hook execution in environments where only `corepack pnpm` is available.
 
 ## Hard rules
 
