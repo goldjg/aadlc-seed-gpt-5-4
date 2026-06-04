@@ -2,31 +2,30 @@
 
 ## Status
 
-Phase 01 CLI feature is in progress.
+Phase 05 documentation is in progress.
 
 ## Scope
 
-Implement `--format text` and `--format json` output support for the CLI while preserving the current text output as the default.
+Refresh repository documentation so usage examples and output-format guidance match the current CLI behaviour.
 
 ## Intended approach
 
-- Add a global CLI format option at the yargs entry point.
-- Centralize formatted output selection in a small helper so commands can keep their existing text output paths.
-- Update commands to emit structured JSON responses while leaving default text behavior intact.
-- Add focused tests for format parsing and formatted command output.
-- Document the new option in the README.
+- Identify where the README still describes outdated command entrypoints or incomplete output behaviour.
+- Update runnable usage examples to use the current built CLI flow.
+- Document the `--format` contract, including the JSON payload behaviour for interactive commands.
+- Update AADLC artefacts only where the documentation phase needs the governance record to stay aligned.
 
 ## Risks
 
-- The `info` command currently prints raw argv data, so the new global option must not create surprising default-output changes.
-- Interactive commands still rely on text prompts, so JSON mode should only affect their final emitted result.
-- JSON output must stay stable and machine-readable without forcing broader architectural refactoring.
+- README command examples can drift from the actual runnable entrypoint if they rely on the wrong script.
+- Output format documentation can become misleading if it does not mention interactive prompt behaviour.
+- AADLC artefacts can become inconsistent if they still describe the earlier feature phase instead of the docs phase.
 
 ## Assumptions
 
-- Existing interactive prompts remain text-based even when `--format json` is selected.
-- A single JSON object per command execution is sufficient for machine-readable output.
-- Preserving current text logs and messages is more important than normalizing all command outputs into a new shared schema.
+- Existing CLI behaviour is already the source of truth; this phase only documents it.
+- The built `bin/run` entrypoint is the safest basis for runnable README examples.
+- JSON examples should describe stable fields without depending on environment-specific values such as memory totals.
 
 ## Hard rules
 

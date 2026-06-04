@@ -83,31 +83,64 @@ demonstrate the capabilities of the CLI application.
 
 ### Running Commands
 
-- In development mode, use `pnpm start [command name]` to run any command. This utilizes `ts-node` for a seamless
-  development experience.
-- In production, execute the CLI application directly with `my-project [command name]` to run the desired
-  command from the built project (the name of command should be provided in `package.json` in `bin`).
+- Build the CLI before running the checked examples in this README:
+
+  ```sh
+  corepack pnpm build
+  ```
+
+- Use `corepack pnpm start:node [command name]` to run the built CLI through `node ./bin/run`.
+- Use `corepack pnpm start [command name]` to execute `ts-node ./bin/run.ts` during development; this path type-checks
+  the entrypoint before the command runs.
+- After publishing or linking the package, execute the configured binary name from `package.json` to run the built CLI
+  directly.
 - All commands support `--format text` and `--format json`. Text remains the default output format.
 
 ### Output Formats
 
-Use `--format text` for the existing human-readable terminal output, or `--format json` for a single machine-readable
-JSON object describing the command result.
+Use `--format text` for the existing human-readable terminal output, or `--format json` for a single pretty-printed
+JSON object written to stdout when the command finishes.
 
 ```sh
-pnpm start info --format json
-pnpm start create my-project --format json
+corepack pnpm start:node info --format text --full false
+corepack pnpm start:node info --format json --full false
 ```
 
-Interactive commands still prompt in text mode; `--format json` changes the final emitted command result.
+`info` returns a JSON object with `command`, `node`, `processorArchitecture`, `currentDir`, `memoryUsage`, and `argv`.
+It also includes `processConfig` when `--full` is left at its default value of `true`.
+
+Interactive commands still prompt in text mode; `--format json` changes only the final emitted command result:
+
+- `greeting` writes `command`, `username`, `mood`, `greetingMessage`, and `farewellMessage`.
+- `create` writes `command`, `path`, `ready`, and `created`, plus `nextStep` after success or `error` after a failure.
+
+`--format` accepts only `text` or `json`; invalid values fail fast instead of falling back to text.
 
 ### Sample Commands
 
 - **`info`**: Prints information about the current system and Node.js configuration. This command is useful for
   verifying the environment in which the CLI is running.
+
+  ```sh
+  corepack pnpm start:node info --full false
+  corepack pnpm start:node info --format json --full false
+  ```
+
 - **`greeting`**: Demonstrates interactive prompts within the CLI. It's a great way to see how user inputs can be
-  handled in a friendly manner.
+  handled in a friendly manner. The prompts stay interactive even when `--format json` is selected, and the final JSON
+  result contains the collected `username` and `mood`.
+
+  ```sh
+  corepack pnpm start:node greeting
+  corepack pnpm start:node greeting --format json
+  ```
+
 - **`create`**: Create new project based on `cli-typescript-starter`.
+
+  ```sh
+  corepack pnpm start:node create ./my-project
+  corepack pnpm start:node create ./my-project --format json
+  ```
 
 All commands are located in the `src/commands/` folder. This organization makes it easy to find and modify commands or
 add new ones as needed.
@@ -126,7 +159,7 @@ This starter comes with several predefined scripts to help with development:
 - `pnpm format:fix` - Automatically fix code formatting issues with Prettier.
 - `pnpm lint` - Check code for style issues with ESLint.
 - `pnpm lint:fix` - Automatically fix code style issues with ESLint.
-- `pnpm start [command]` - Run the CLI application using `ts-node`.
+- `pnpm start [command]` - Run the CLI application with `ts-node`, including entrypoint type-checking before execution.
 - `pnpm start:node [command]` - Run the CLI application from the `dist/` directory.
 - `pnpm test` - Run unit tests.
 - `pnpm test:watch` - Run tests and watch for file changes.
